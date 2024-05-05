@@ -6,8 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import dagger.hilt.android.AndroidEntryPoint
 import io.github.justincodinguk.core.ui.theme.HeritageHubTheme
-import io.github.justincodinguk.features.auth.LoginScreen
-import io.github.justincodinguk.features.posts.PostsScreen
+import io.github.justincodinguk.heritagehub.navigation.HeritageHubNavigator
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -16,9 +15,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             HeritageHubTheme(dynamicColor = false) {
-                LoginScreen()
+                HeritageHubNavigator()
             }
         }
     }
 }
-
