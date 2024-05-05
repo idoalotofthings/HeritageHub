@@ -1,7 +1,9 @@
 package io.github.justincodinguk.core.data.repository
 
 import android.net.Uri
+import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.model.User
+import kotlinx.coroutines.flow.Flow
 
 interface AuthRepository {
 
@@ -13,11 +15,11 @@ interface AuthRepository {
 
     suspend fun getCurrentUser(): User?
 
-    suspend fun createUser(
+    fun createUser(
         email: String,
         password: String,
         name: String,
         profileImageUri: Uri
-    ): User
+    ): Flow<AuthStatus>
 
 }

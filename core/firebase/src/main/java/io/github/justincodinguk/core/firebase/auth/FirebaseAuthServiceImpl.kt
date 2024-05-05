@@ -1,8 +1,10 @@
 package io.github.justincodinguk.core.firebase.auth
 
 import android.net.Uri
+import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
+import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.firebase.di.UserService
 import io.github.justincodinguk.core.firebase.firestore_service.FirestoreService
 import io.github.justincodinguk.core.model.User
@@ -17,7 +19,7 @@ internal class FirebaseAuthServiceImpl @Inject constructor(
 
     override val isSignedIn = auth.currentUser != null
 
-    override suspend fun createUser(
+    override fun createUser(
         email: String,
         password: String,
         name: String,
@@ -26,7 +28,9 @@ internal class FirebaseAuthServiceImpl @Inject constructor(
         emit(AuthStatus.Loading)
         try {
             auth.createUserWithEmailAndPassword(email, password).await()
+            Log.d("SENT FB REQ", "SEND FB REQ")
             auth.currentUser?.sendEmailVerification()?.await()
+            emit(AuthStatus.VerificationNeeded)
             var count = 0
             auth.currentUser?.isEmailVerified?.let {
                 while(!auth.currentUser?.isEmailVerified!! || count>=24){
@@ -51,7 +55,7 @@ internal class FirebaseAuthServiceImpl @Inject constructor(
         } catch (e: Exception) {
             e.printStackTrace()
             auth.currentUser?.delete()
-            emit(AuthStatus.Unauthenticated)
+            emit(AuthStatus.Error)
         }
     }
 

@@ -29,17 +29,10 @@ class AuthRepositoryImpl @Inject constructor(
         return firebaseAuth.getCurrentUser()
     }
 
-    override suspend fun createUser(
+    override fun createUser(
         email: String,
         password: String,
         name: String,
         profileImageUri: Uri
-    ): User {
-        val result = firebaseAuth.createUser(email,password,name,profileImageUri)
-        if(result.isSuccess) {
-            return result.getOrNull()!!
-        } else {
-            throw result.exceptionOrNull()!!
-        }
-    }
+    ) = firebaseAuth.createUser(email,password,name,profileImageUri)
 }

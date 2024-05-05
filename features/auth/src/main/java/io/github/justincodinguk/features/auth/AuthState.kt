@@ -1,6 +1,7 @@
 package io.github.justincodinguk.features.auth
 
 import android.net.Uri
+import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.model.User
 
 data class AuthState(
@@ -15,7 +16,7 @@ data class AuthState(
     companion object {
         fun empty(): AuthState {
             return AuthState(
-                currentStatus = AuthStatus.LOADING,
+                currentStatus = AuthStatus.Loading,
                 currentMode = AuthMode.LOGIN,
                 email = "",
                 password = "",
@@ -25,13 +26,6 @@ data class AuthState(
             )
         }
     }
-}
-
-enum class AuthStatus {
-    LOGGED_IN,
-    NOT_LOGGED_IN,
-    ERROR,
-    LOADING
 }
 
 enum class AuthMode {

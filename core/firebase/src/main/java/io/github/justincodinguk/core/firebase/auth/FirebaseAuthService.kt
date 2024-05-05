@@ -6,12 +6,12 @@ import kotlinx.coroutines.flow.Flow
 
 interface FirebaseAuthService {
 
-    suspend fun createUser(
+    fun createUser(
         email: String,
         password: String,
         name: String,
         profilePictureUri: Uri
-    ): Flow<AuthStatus>
+    ): Flow<io.github.justincodinguk.core.dev.AuthStatus>
 
     suspend fun signIn(
         email: String,

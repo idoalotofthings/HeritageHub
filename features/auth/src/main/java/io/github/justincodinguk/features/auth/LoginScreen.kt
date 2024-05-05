@@ -1,6 +1,7 @@
 package io.github.justincodinguk.features.auth
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -28,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.ui.auth.AuthConfirmButton
 import io.github.justincodinguk.core.ui.auth.CredentialsTextField
 import io.github.justincodinguk.core.ui.auth.ElevatedCardButton
@@ -37,7 +39,10 @@ import io.github.justincodinguk.core.ui.navigation.HeritageHubBottomNavBar
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
-    viewModel: AuthViewModel = hiltViewModel()
+    viewModel: AuthViewModel = hiltViewModel(),
+    onSignUp: () -> Unit,
+    onGoogleSignIn: () -> Unit,
+    onSignIn: () -> Unit
 ) {
 
     val state by viewModel.authState.collectAsState()
@@ -51,12 +56,15 @@ fun LoginScreen(
     ) { innerPadding ->
 
         when (state.currentStatus) {
-            AuthStatus.LOADING -> CircularProgressIndicator()
-            AuthStatus.LOGGED_IN -> {
-                TODO("Navigate to home screen")
+            is AuthStatus.VerificationNeeded -> {}
+            is AuthStatus.Loading -> {
+                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                    CircularProgressIndicator()
+                }
             }
+            is AuthStatus.Authenticated -> onSignIn()
 
-            AuthStatus.ERROR -> {
+            is AuthStatus.Error -> {
                 if (!errorDialogShown) {
                     AlertDialog(
                         onDismissRequest = {},
@@ -72,16 +80,22 @@ fun LoginScreen(
                     state = state,
                     viewModel = viewModel,
                     innerPadding = innerPadding,
-                    onSignIn = { errorDialogShown = false }
+                    onSignIn = { errorDialogShown = false; viewModel.login() },
+                    onSignUp = onSignUp,
+                    onGoogleSignIn = onGoogleSignIn
                 )
 
             }
 
-            AuthStatus.NOT_LOGGED_IN -> AuthScreenContent(
+            AuthStatus.Unauthenticated -> AuthScreenContent(
                 state = state,
                 viewModel = viewModel,
                 innerPadding = innerPadding,
-                onSignIn = { errorDialogShown = false }
+                onSignIn = {
+                    errorDialogShown = false; viewModel.login()
+                },
+                onGoogleSignIn = onGoogleSignIn,
+                onSignUp = onSignUp
             )
         }
     }
@@ -92,7 +106,9 @@ private fun AuthScreenContent(
     state: AuthState,
     viewModel: AuthViewModel,
     innerPadding: PaddingValues,
-    onSignIn: () -> Unit
+    onSignIn: () -> Unit,
+    onGoogleSignIn: () -> Unit,
+    onSignUp: () -> Unit,
 ) {
 
     Column(
@@ -140,7 +156,7 @@ private fun AuthScreenContent(
         ElevatedCardButton(
             text = "Google",
             icon = io.github.justincodinguk.core.ui.R.drawable.google,
-            onClick = { /* TODO("Sign in with Google") */ },
+            onClick = onGoogleSignIn,
             modifier = Modifier.padding(horizontal = 32.dp)
         )
 
@@ -156,8 +172,10 @@ private fun AuthScreenContent(
             HorizontalDivider(Modifier.width(48.dp))
         }
 
-        AuthConfirmButton(text = "Sign Up", modifier = Modifier.padding(horizontal = 32.dp)) {
-            /*TODO("Navigate to sign up screen")*/
-        }
+        AuthConfirmButton(
+            text = "Sign Up",
+            modifier = Modifier.padding(horizontal = 32.dp),
+            onSignUp
+        )
     }
 }
