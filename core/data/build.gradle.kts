@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(project(":core:model"))
     implementation(project(":core:firebase"))
+    implementation(project(":core:dev"))
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
