@@ -11,25 +11,34 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import io.github.justincodinguk.core.ui.navigation.HeritageHubBottomNavBar
+import io.github.justincodinguk.core.ui.common.CreatePostFloatingActionButton
+import io.github.justincodinguk.core.ui.common.HeritageHubTopAppBar
 import io.github.justincodinguk.core.ui.posts.PostsList
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PostsScreen(
     modifier: Modifier = Modifier,
+    onCreatePostButtonClick: () -> Unit,
+    onPostClicked: (String) -> Unit,
     viewModel: PostsViewModel = hiltViewModel()
 ) {
 
     val posts = viewModel.posts.collectAsLazyPagingItems()
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(text = "Heritage Hub") })},
+        topBar = { HeritageHubTopAppBar() },
         bottomBar = { HeritageHubBottomNavBar() },
+        floatingActionButton = {
+            CreatePostFloatingActionButton(onClick = onCreatePostButtonClick)
+        },
         modifier = modifier
     ) { innerPadding ->
         Column(Modifier.padding(innerPadding)) {
-            PostsList(posts = posts)
+            PostsList(
+                posts = posts,
+                onPostClicked = onPostClicked
+            )
         }
     }
 }

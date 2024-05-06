@@ -1,5 +1,9 @@
 package io.github.justincodinguk.features.auth
 
+import android.app.Activity
+import android.util.Log
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,13 +30,19 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.gms.common.api.ApiException
 import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.ui.auth.AuthConfirmButton
 import io.github.justincodinguk.core.ui.auth.CredentialsTextField
 import io.github.justincodinguk.core.ui.auth.ElevatedCardButton
+import io.github.justincodinguk.core.ui.common.HeritageHubTopAppBar
 import io.github.justincodinguk.core.ui.navigation.HeritageHubBottomNavBar
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -51,17 +61,22 @@ fun LoginScreen(
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(text = "Heritage Hub") }) },
+        topBar = { HeritageHubTopAppBar() },
         modifier = modifier,
     ) { innerPadding ->
 
         when (state.currentStatus) {
             is AuthStatus.VerificationNeeded -> {}
             is AuthStatus.Loading -> {
-                Box(contentAlignment = Alignment.Center, modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+                Box(
+                    contentAlignment = Alignment.Center, modifier = Modifier
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                ) {
                     CircularProgressIndicator()
                 }
             }
+
             is AuthStatus.Authenticated -> onSignIn()
 
             is AuthStatus.Error -> {
@@ -111,6 +126,24 @@ private fun AuthScreenContent(
     onSignUp: () -> Unit,
 ) {
 
+    val signInLauncher =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            Log.d("RESULT", it.resultCode.toString())
+
+            if (it.resultCode == Activity.RESULT_OK) {
+                val signInRequest = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+                val account = signInRequest.getResult(ApiException::class.java)
+                viewModel.signInWithGoogle(account.idToken ?: "")
+                //try {
+
+                //} catch (e: ApiException) {
+                  //  e.printStackTrace()
+               // }
+            }
+        }
+
+    val context = LocalContext.current
+
     Column(
         Modifier
             .padding(innerPadding)
@@ -146,17 +179,20 @@ private fun AuthScreenContent(
         )
 
         AuthConfirmButton(
-            text = "Sign In", onClick = {
-                viewModel.login()
-                onSignIn()
-            },
+            text = "Sign In", onClick = onSignIn,
             modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 24.dp, bottom = 12.dp)
         )
 
         ElevatedCardButton(
             text = "Google",
             icon = io.github.justincodinguk.core.ui.R.drawable.google,
-            onClick = onGoogleSignIn,
+            onClick = {
+                val client = GoogleSignIn.getClient(
+                    context,
+                    GoogleSignInOptions.DEFAULT_SIGN_IN
+                ).signInIntent
+                signInLauncher.launch(client)
+            },
             modifier = Modifier.padding(horizontal = 32.dp)
         )
 

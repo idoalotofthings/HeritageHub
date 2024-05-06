@@ -7,26 +7,20 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,10 +32,8 @@ import io.github.justincodinguk.core.ui.R
 import io.github.justincodinguk.core.ui.auth.AuthConfirmButton
 import io.github.justincodinguk.core.ui.auth.CredentialsTextField
 import io.github.justincodinguk.core.ui.auth.ElevatedCardButton
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
+import io.github.justincodinguk.core.ui.common.HeritageHubTopAppBar
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun RegisterScreen(
     modifier: Modifier = Modifier,
@@ -50,7 +42,7 @@ fun RegisterScreen(
 ) {
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text(text = "Heritage Hub") }) },
+        topBar = { HeritageHubTopAppBar() },
         modifier = modifier,
     ) { innerPadding ->
 
@@ -90,10 +82,11 @@ fun RegisterScreen(
                 if (!verificationDialogShown) {
                     AlertDialog(
                         onDismissRequest = { /*TODO*/ },
-                        confirmButton = { /*TODO*/ },
+                        confirmButton = { Button(onClick = { verificationDialogShown = true }) {
+                            Text(text = "Ok")
+                        } },
                         text = { Text(text = "Check your inbox and follow the instructions in the mail. You'll be redirected to the home screen once verification completes") }
                     )
-                    verificationDialogShown = true
                 }
             }
 
@@ -108,7 +101,7 @@ fun RegisterScreen(
                         },
                         text = { Text(text = "Couldn't register this mail. Either the account already exists or there was an error") }
                     )
-                    errDialogShown = true
+
                 }
                 RegisterScreenContent(
                     state = state,
@@ -196,10 +189,7 @@ private fun RegisterScreenContent(
         )
 
         AuthConfirmButton(
-            text = "Sign Up", onClick = {
-                viewModel.register()
-                onSignUp()
-            },
+            text = "Sign Up", onClick = onSignUp,
             modifier = Modifier.padding(start = 32.dp, end = 32.dp, top = 24.dp, bottom = 12.dp)
         )
     }
