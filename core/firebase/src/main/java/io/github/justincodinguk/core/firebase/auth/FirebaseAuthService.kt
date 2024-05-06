@@ -1,6 +1,8 @@
 package io.github.justincodinguk.core.firebase.auth
 
 import android.net.Uri
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.model.User
 import kotlinx.coroutines.flow.Flow
 
@@ -11,12 +13,16 @@ interface FirebaseAuthService {
         password: String,
         name: String,
         profilePictureUri: Uri
-    ): Flow<io.github.justincodinguk.core.dev.AuthStatus>
+    ): Flow<AuthStatus>
 
     suspend fun signIn(
         email: String,
         password: String
-    ): Result<User>
+    ): Flow<AuthStatus>
+
+    suspend fun googleSignIn(
+        accountTokenId: String
+    ): Flow<AuthStatus>
 
     fun signOut()
 

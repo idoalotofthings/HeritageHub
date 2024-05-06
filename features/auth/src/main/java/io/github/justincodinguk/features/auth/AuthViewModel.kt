@@ -1,6 +1,7 @@
 package io.github.justincodinguk.features.auth
 
 import android.net.Uri
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -48,91 +49,134 @@ class AuthViewModel @Inject constructor(
                     )
                 )
             }
-
         }
     }
 
     fun login() {
         viewModelScope.launch {
-            var user = User("","","")
-            try {
-                user = authRepository.signIn(_authState.value.email, _authState.value.password)
-                _authState.emit(
-                    AuthState(
-                        currentStatus = AuthStatus.Loading,
-                        user = null,
-                        currentMode = AuthMode.LOGIN,
-                        email = user.id,
-                        password = _authState.value.password,
-                        name = user.name,
-                        profilePictureUri = Uri.EMPTY,
-                    )
-                )
-            } catch (e: Exception) {
-                _authState.emit(
-                    AuthState.empty().copy(
-                        currentStatus = AuthStatus.Error,
-                        password = _authState.value.password,
-                        email = _authState.value.email
-                    )
-                )
-            } finally {
-                _authState.emit(
-                    AuthState(
-                        currentStatus = AuthStatus.Loading,
-                        user = user,
-                        currentMode = AuthMode.LOGIN,
-                        email = user.id,
-                        password = _authState.value.password,
-                        name = user.name,
-                        profilePictureUri = Uri.parse(user.profileImage),
-                    )
-                )
-            }
-        }
-    }
+            authRepository
+                .signIn(_authState.value.email, _authState.value.password)
+                .collect {
 
-    fun register() {
-        viewModelScope.launch {
-
-                val user = authRepository.createUser(
-                    _authState.value.email,
-                    _authState.value.password,
-                    _authState.value.name,
-                    _authState.value.profilePictureUri
-                )
-
-                user.collect {
-                    if(it is AuthStatus.Authenticated) {
+                    if (it is AuthStatus.Loading) {
                         _authState.emit(
                             AuthState(
-                                currentStatus = AuthStatus.Authenticated(it.result),
+                                currentStatus = AuthStatus.Loading,
+                                user = null,
+                                currentMode = AuthMode.LOGIN,
+                                email = _authState.value.email,
+                                password = _authState.value.password,
+                                name = _authState.value.name,
+                                profilePictureUri = Uri.EMPTY,
+                            )
+                        )
+                    } else if (it is AuthStatus.Authenticated) {
+                        _authState.emit(
+                            AuthState(
+                                currentStatus = it,
                                 user = it.result,
-                                currentMode = AuthMode.REGISTER,
+                                currentMode = AuthMode.LOGIN,
+                                email = it.result.id,
+                                password = _authState.value.password,
+                                name = it.result.name,
+                                profilePictureUri = Uri.parse(it.result.profileImage),
+                            )
+                        )
+                    } else if (it is AuthStatus.Unauthenticated) {
+                        _authState.emit(
+                            AuthState(
+                                currentStatus = it,
+                                user = null,
+                                currentMode = AuthMode.LOGIN,
                                 email = _authState.value.email,
                                 password = _authState.value.password,
                                 name = _authState.value.name,
                                 profilePictureUri = _authState.value.profilePictureUri,
                             )
                         )
-                    } else if(it is AuthStatus.Loading || it is AuthStatus.VerificationNeeded) {
-                        _authState.emit(
-                            _authState.value.copy(
-                                currentStatus = it,
-                            )
-                        )
-                    } else {
+                    } else if (it is AuthStatus.Error) {
                         _authState.emit(
                             AuthState.empty().copy(
                                 currentStatus = AuthStatus.Error,
                                 password = _authState.value.password,
-                                email = _authState.value.email,
-                                currentMode = AuthMode.REGISTER
+                                email = _authState.value.email
                             )
                         )
                     }
                 }
+        }
+    }
 
+    fun register() {
+        Log.d("AuthVM", "Register")
+        viewModelScope.launch {
+            val user = authRepository.createUser(
+                _authState.value.email,
+                _authState.value.password,
+                _authState.value.name,
+                _authState.value.profilePictureUri
+            )
+
+            user.collect {
+                if (it is AuthStatus.Authenticated) {
+                    _authState.emit(
+                        AuthState(
+                            currentStatus = AuthStatus.Authenticated(it.result),
+                            user = it.result,
+                            currentMode = AuthMode.REGISTER,
+                            email = _authState.value.email,
+                            password = _authState.value.password,
+                            name = _authState.value.name,
+                            profilePictureUri = _authState.value.profilePictureUri,
+                        )
+                    )
+                } else if (it is AuthStatus.Loading || it is AuthStatus.VerificationNeeded) {
+                    _authState.emit(
+                        _authState.value.copy(
+                            currentStatus = it,
+                        )
+                    )
+                } else {
+                    _authState.emit(
+                        AuthState.empty().copy(
+                            currentStatus = AuthStatus.Error,
+                            password = _authState.value.password,
+                            email = _authState.value.email,
+                            currentMode = AuthMode.REGISTER
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun signInWithGoogle(accountId: String) {
+        viewModelScope.launch {
+            authRepository.googleSignIn(accountId).collect {
+                if (it is AuthStatus.Authenticated) {
+                    _authState.emit(
+                        _authState.value.copy(
+                            currentStatus = AuthStatus.Authenticated(it.result),
+                            user = it.result,
+                            currentMode = AuthMode.LOGIN,
+                        )
+                    )
+                } else if(it is AuthStatus.Error) {
+                    _authState.emit(
+                        AuthState.empty().copy(
+                            currentStatus = AuthStatus.Error,
+                            currentMode = AuthMode.LOGIN
+                        )
+                    )
+                } else if(it is AuthStatus.Loading) {
+                    _authState.emit(
+                        AuthState.empty().copy(
+                            currentStatus = AuthStatus.Loading,
+                            currentMode = AuthMode.LOGIN
+                        )
+                    )
+                }
+            }
         }
     }
 

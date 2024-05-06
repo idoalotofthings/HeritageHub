@@ -9,7 +9,11 @@ interface AuthRepository {
 
     val isSignedIn: Boolean
 
-    suspend fun signIn(email: String, password: String) : User
+    suspend fun signIn(email: String, password: String) : Flow<AuthStatus>
+
+    suspend fun googleSignIn(
+        accountTokenId: String
+    ) : Flow<AuthStatus>
 
     fun signOut()
 
