@@ -8,6 +8,8 @@ interface PostsRepository {
 
     fun getPagedPosts() : Flow<PagingData<Post>>
 
+    suspend fun getPostById(id: String) : Post
+
     suspend fun addPost(post: Post)
 
     suspend fun editPost(post: Post)

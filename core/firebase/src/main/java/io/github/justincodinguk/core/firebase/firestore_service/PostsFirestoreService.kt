@@ -33,9 +33,9 @@ internal class PostsFirestoreService @Inject constructor(
                 Post(
                     id = doc.id,
                     title = doc.getString("title") ?: "",
-                    body = doc.getString("body") ?: "",
+                    body = "",
                     likeCount = doc.getLong("likeCount")?.toInt() ?: 0,
-                    photoUrls = doc.get("photos") as? List<String> ?: emptyList(),
+                    photoUrls = listOf((doc.get("photos") as? List<String>)?.get(0) ?: ""),
                     author = user
                 )
             )

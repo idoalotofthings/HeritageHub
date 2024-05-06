@@ -8,7 +8,7 @@ import io.github.justincodinguk.core.firebase.firestore_service.FirestoreService
 import io.github.justincodinguk.core.model.Post
 import javax.inject.Inject
 
-class PostsRepositoryImpl @Inject constructor(
+internal class PostsRepositoryImpl @Inject constructor(
     @PostService private val firestoreService: FirestoreService<Post>
 ) : PostsRepository {
 
@@ -19,6 +19,9 @@ class PostsRepositoryImpl @Inject constructor(
     override suspend fun addPost(post: Post) {
         firestoreService.createDocument(post)
     }
+
+    override suspend fun getPostById(id: String)
+        = firestoreService.getDocumentById(id)
 
     override suspend fun editPost(post: Post) {
         firestoreService.updateDocument(post)
