@@ -69,6 +69,7 @@ dependencies {
     implementation(project(":core:ui"))
     implementation(project(":features:posts"))
     implementation(project(":features:auth"))
+    implementation(project(":features:detail"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)

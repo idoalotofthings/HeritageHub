@@ -12,13 +12,17 @@ import io.github.justincodinguk.core.model.Post
 @Composable
 fun PostsList(
     posts: LazyPagingItems<Post>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onPostClicked: (String) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         items(posts.itemCount) {
             PostCard(
                 post = posts[it]!!,
-                modifier = Modifier.padding(4.dp)
+                modifier = Modifier.padding(4.dp),
+                onClick = {
+                    onPostClicked(posts[it]!!.id)
+                }
             )
         }
     }

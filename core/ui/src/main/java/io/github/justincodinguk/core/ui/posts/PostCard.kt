@@ -2,6 +2,7 @@ package io.github.justincodinguk.core.ui.posts
 
 import android.content.res.Configuration
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -31,17 +32,21 @@ import coil.compose.AsyncImage
 import io.github.justincodinguk.core.model.Post
 import io.github.justincodinguk.core.model.User
 import io.github.justincodinguk.core.ui.R
+import io.github.justincodinguk.core.ui.common.ReactionChip
 import io.github.justincodinguk.core.ui.common.debugPlaceholder
 import io.github.justincodinguk.core.ui.theme.HeritageHubTheme
 
 @Composable
 fun PostCard(
     post: Post,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit,
 ) {
     Card(
         elevation = CardDefaults.elevatedCardElevation(16.dp),
-        modifier = modifier.padding(8.dp)
+        modifier = modifier
+            .padding(8.dp)
+            .clickable { onClick() }
     ) {
         Box {
             AsyncImage(
@@ -135,6 +140,6 @@ private fun PostCardPreview() {
                 body = "",
                 likeCount = 12
             )
-        )
+        ) {}
     }
 }
