@@ -9,4 +9,15 @@ data class Post(
     val title: String,
     val body: String,
     val photoUrls: List<String>
-)
+) {
+    companion object {
+        fun empty() = Post(
+            id = "",
+            likeCount = 0,
+            author = User.empty(),
+            title = "",
+            body = "",
+            photoUrls = emptyList()
+        )
+    }
+}

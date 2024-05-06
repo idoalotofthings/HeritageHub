@@ -6,4 +6,8 @@ data class User(
     val id: String,
     val name: String,
     val profileImage: String
-)
+) {
+    companion object {
+        fun empty() = User("", "", "")
+    }
+}
