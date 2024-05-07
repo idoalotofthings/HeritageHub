@@ -7,7 +7,7 @@ interface FirestoreService<T> {
 
     suspend fun getDocumentById(id: String): T
 
-    suspend fun createDocument(document: T)
+    suspend fun createDocument(document: T) : String
 
     suspend fun updateDocument(document: T)
 

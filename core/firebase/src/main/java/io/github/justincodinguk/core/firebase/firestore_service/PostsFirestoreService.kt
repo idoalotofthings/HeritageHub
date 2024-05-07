@@ -48,10 +48,13 @@ internal class PostsFirestoreService @Inject constructor(
         return post.toObject(Post::class.java)!!
     }
 
-    override suspend fun createDocument(document: Post) {
+    override suspend fun createDocument(document: Post) : String {
         val photos =
             storageService.uploadImages(document.id, document.photoUrls.map { Uri.parse(it) })
-        firestore.collection("/posts").add(document.copy(photoUrls = photos)).await()
+        val id = firestore.collection("/posts").document().id
+        firestore.collection("/posts").document(id).set(document.copy(id = id, photoUrls = photos))
+            .await()
+        return id
     }
 
     override suspend fun deleteDocument(document: Post) {

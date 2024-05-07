@@ -42,9 +42,10 @@ internal class UsersFirestoreService @Inject constructor(
         firestore.collection("/users").document(document.id).set(document).await()
     }
 
-    override suspend fun createDocument(document: User) {
+    override suspend fun createDocument(document: User) : String {
         val url = storageService.uploadProfileImage(document.id, Uri.parse(document.profileImage))
         firestore.collection("/users").add(document.copy(profileImage = url)).await()
+        return document.id
     }
 
 }

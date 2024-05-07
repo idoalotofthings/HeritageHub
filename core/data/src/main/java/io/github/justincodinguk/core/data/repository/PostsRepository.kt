@@ -10,10 +10,16 @@ interface PostsRepository {
 
     suspend fun getPostById(id: String) : Post
 
-    suspend fun addPost(post: Post)
+    suspend fun createPost(post: Post) : String
 
     suspend fun editPost(post: Post)
 
     suspend fun deletePost(post: Post)
+
+    suspend fun savePost(post: Post, isFavorite: Boolean, isSelfAuthored: Boolean)
+
+    fun getSelfAuthoredPosts() : Flow<Post>
+
+    fun getFavoritePosts() : Flow<Post>
 
 }
