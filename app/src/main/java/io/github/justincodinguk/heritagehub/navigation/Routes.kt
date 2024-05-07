@@ -4,5 +4,8 @@ enum class Routes {
     SIGN_IN,
     SIGN_UP,
     HOME,
-    DETAILS
+    DETAILS,
+    CREATE_POST,
+    ACCOUNT,
+    FOLLOWING
 }

@@ -5,9 +5,12 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.github.justincodinguk.features.account.AccountScreen
 import io.github.justincodinguk.features.auth.LoginScreen
 import io.github.justincodinguk.features.auth.RegisterScreen
 import io.github.justincodinguk.features.detail.DetailsScreen
+import io.github.justincodinguk.features.following.FollowingUsersScreen
+import io.github.justincodinguk.features.posts.NewPostScreen
 import io.github.justincodinguk.features.posts.PostsScreen
 
 
@@ -33,7 +36,9 @@ fun HeritageHubNavigator(
 
         composable(Routes.HOME.name) {
             PostsScreen(
-                onCreatePostButtonClick = { /* TODO: Navigate to create post screen */ },
+                onCreatePostButtonClick = {
+                    navController.navigate(Routes.CREATE_POST.name)
+                },
                 onPostClicked = {
                     navController.navigate("${Routes.DETAILS.name}/${it}")
                 }
@@ -43,6 +48,28 @@ fun HeritageHubNavigator(
         composable("${Routes.DETAILS.name}/{postId}") {
             val postId = it.arguments?.getString("postId") ?: ""
             DetailsScreen(postId)
+        }
+
+        composable(Routes.CREATE_POST.name) {
+            NewPostScreen(
+                navigateBackToHomeScreen = {
+                    navController.navigate(Routes.HOME.name)
+                }
+            )
+        }
+
+        composable(Routes.ACCOUNT.name) {
+            AccountScreen(
+                navigateToFollowersScreen = { navController.navigate(Routes.FOLLOWING.name) },
+                navigateToMyPostsScreen = { /*TODO*/ },
+                navigateToMyHeritageScreen = { /*TODO*/ },
+                navigateToAboutScreen = { /*TODO*/ },
+                navigateToLoginScreen = { navController.navigate(Routes.SIGN_IN.name) }
+            )
+        }
+
+        composable(Routes.FOLLOWING.name) {
+            FollowingUsersScreen()
         }
     }
 }

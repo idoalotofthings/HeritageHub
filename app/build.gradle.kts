@@ -70,6 +70,8 @@ dependencies {
     implementation(project(":features:posts"))
     implementation(project(":features:auth"))
     implementation(project(":features:detail"))
+    implementation(project(":features:account"))
+    implementation(project(":features:following"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
