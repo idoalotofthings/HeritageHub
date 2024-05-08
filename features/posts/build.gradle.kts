@@ -17,7 +17,7 @@ android {
 
         configurations.all {
             resolutionStrategy {
-                force("androidx.compose.compiler:compiler:1.5.3")
+                force("androidx.compose.compiler:compiler:1.5.4")
             }
         }
     }

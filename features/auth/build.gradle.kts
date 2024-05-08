@@ -16,7 +16,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         configurations.all {
-            resolutionStrategy.force("androidx.compose.compiler:compiler:1.5.3")
+            resolutionStrategy.force("androidx.compose.compiler:compiler:1.5.4")
         }
     }
 
@@ -27,6 +27,10 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+
+        debug {
+            manifestPlaceholders["enableGoogleSignInAuthDebugLogging"] = true
         }
     }
     compileOptions {

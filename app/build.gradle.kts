@@ -24,7 +24,7 @@ android {
 
         configurations.all {
             resolutionStrategy {
-                force("androidx.compose.compiler:compiler:1.5.3")
+                force("androidx.compose.compiler:compiler:1.5.4")
             }
         }
     }
@@ -65,13 +65,20 @@ dependencies {
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
+    implementation(libs.hilt.navigation.compose)
+
+    implementation(platform(libs.google.firebase.bom))
+    implementation(libs.google.firebase.messaging)
 
     implementation(project(":core:ui"))
+    implementation(project(":core:data"))
+    implementation(project(":core:model"))
     implementation(project(":features:posts"))
     implementation(project(":features:auth"))
     implementation(project(":features:detail"))
     implementation(project(":features:account"))
     implementation(project(":features:following"))
+    implementation(project(":features:heritage"))
 
     implementation(libs.hilt.android)
     ksp(libs.hilt.android.compiler)
