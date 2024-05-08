@@ -30,7 +30,9 @@ fun ReactionChip(
     likeCount: Int,
     isSaved: Boolean,
     isLiked: Boolean,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLike: () -> Unit,
+    onSave: () -> Unit,
 ) {
     Surface(
         shape = RoundedCornerShape(32.dp),
@@ -50,7 +52,7 @@ fun ReactionChip(
                 text = likeCount.toString(),
                 modifier = Modifier.padding(horizontal = 4.dp),
                 clickable = true,
-                onClick = { /*TODO*/ }
+                onClick = onLike
             )
 
             VerticalDivider(
@@ -58,7 +60,7 @@ fun ReactionChip(
                 color = LocalContentColor.current
             )
 
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = onSave) {
                 Icon(
                     imageVector = if (isSaved) {
                         Icons.Filled.Favorite
@@ -83,6 +85,6 @@ fun ReactionChip(
 @Composable
 fun ReactionChipPreview() {
     HeritageHubTheme {
-        ReactionChip(likeCount = 54, isSaved = true, isLiked = false)
+        ReactionChip(likeCount = 54, isSaved = true, isLiked = false, onLike = {}, onSave = {})
     }
 }

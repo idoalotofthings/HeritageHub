@@ -7,5 +7,11 @@ enum class Routes {
     DETAILS,
     CREATE_POST,
     ACCOUNT,
-    FOLLOWING
+    FOLLOWING, // Account
+    MY_POSTS,
+    ABOUT,
+    MY_HERITAGE,
+    CREATE_HERITAGE, // Account
+    SPLASH,
+    UNVERIFIED_USER
 }

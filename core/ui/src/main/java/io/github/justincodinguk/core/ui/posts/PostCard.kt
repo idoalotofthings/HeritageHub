@@ -29,6 +29,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import io.github.justincodinguk.core.model.Heritage
 import io.github.justincodinguk.core.model.Post
 import io.github.justincodinguk.core.model.User
 import io.github.justincodinguk.core.ui.R
@@ -41,6 +42,8 @@ fun PostCard(
     post: Post,
     modifier: Modifier = Modifier,
     onClick: () -> Unit,
+    onSave: () -> Unit,
+    onLike: () -> Unit
 ) {
     Card(
         elevation = CardDefaults.elevatedCardElevation(16.dp),
@@ -113,11 +116,11 @@ fun PostCard(
                     likeCount = 54,
                     isSaved = true,
                     isLiked = false,
-                    modifier = Modifier.padding(2.dp)
+                    modifier = Modifier.padding(2.dp),
+                    onSave = onSave,
+                    onLike = onLike
                 )
-
             }
-
         }
     }
 }
@@ -134,12 +137,14 @@ private fun PostCardPreview() {
                 author = User(
                     id = "",
                     name = "David Guetta",
-                    profileImage = ""
+                    profileImage = "",
+                    heritage = Heritage()
                 ),
                 photoUrls = listOf(""),
                 body = "",
-                likeCount = 12
-            )
+                likeCount = 12,
+
+            ),Modifier,{}, {}
         ) {}
     }
 }

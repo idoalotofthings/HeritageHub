@@ -1,6 +1,8 @@
 package io.github.justincodinguk.core.ui.detail
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -10,6 +12,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
 import coil.compose.AsyncImage
 
 @Composable
@@ -22,8 +25,9 @@ fun ImageWrapText(
 ) {
 
     Row(
-        modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
     ) {
         if (!reverseLayout) {
             AsyncImage(
@@ -33,6 +37,7 @@ fun ImageWrapText(
                 modifier = Modifier
                     .clip(shape)
                     .padding(8.dp)
+                    .size(128.dp)
             )
 
             Text(
@@ -53,6 +58,8 @@ fun ImageWrapText(
                 modifier = Modifier
                     .clip(shape)
                     .padding(8.dp)
+                    .size(128.dp)
+
             )
         }
     }

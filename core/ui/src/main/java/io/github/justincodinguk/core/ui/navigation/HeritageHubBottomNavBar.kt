@@ -11,22 +11,23 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun HeritageHubBottomNavBar(modifier: Modifier = Modifier) {
+fun HeritageHubBottomNavBar(
+    modifier: Modifier = Modifier,
+    navigateToHome: () -> Unit = {},
+    navigateToFavorites: () -> Unit= {},
+    selectedIndex: Int = 0,
+    navigateToAccountScreen: () -> Unit = {}
+) {
 
     NavigationBar(modifier = modifier) {
         NavigationBarItem(
-            selected = true,
-            onClick = { /*TODO*/ },
+            selected = selectedIndex==0,
+            onClick = navigateToHome,
             icon = { Icon(imageVector = Icons.Filled.Home, contentDescription = "Home") }
         )
         NavigationBarItem(
-            selected = false,
-            onClick = { /*TODO*/ },
-            icon = { Icon(imageVector = Icons.Filled.Favorite, contentDescription = "Home") }
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = { /*TODO*/ },
+            selected = selectedIndex==1,
+            onClick = navigateToAccountScreen,
             icon = { Icon(imageVector = Icons.Filled.AccountCircle, contentDescription = "Home") }
         )
     }

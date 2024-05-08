@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import io.github.justincodinguk.core.ui.common.HeritageHubTopAppBar
+import io.github.justincodinguk.core.ui.detail.AuthorInfo
 import io.github.justincodinguk.core.ui.detail.DetailFragmentedList
 
 @Composable
@@ -39,7 +40,7 @@ fun DetailsScreen(
 
             Text(
                 text = state.title,
-                style = MaterialTheme.typography.titleMedium,
+                style = MaterialTheme.typography.headlineLarge,
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
 
@@ -51,7 +52,9 @@ fun DetailsScreen(
 
             DetailFragmentedList(
                 body = state.body,
-                photos = state.photoUrls
+                photos = state.photoUrls,
+                modifier = Modifier.fillMaxWidth(),
+                author = state.author
             )
         }
     }

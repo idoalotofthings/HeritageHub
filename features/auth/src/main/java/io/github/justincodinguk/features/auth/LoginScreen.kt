@@ -31,27 +31,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
+import com.google.android.gms.auth.api.Auth
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.common.api.GoogleApiClient
 import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.ui.auth.AuthConfirmButton
 import io.github.justincodinguk.core.ui.auth.CredentialsTextField
 import io.github.justincodinguk.core.ui.auth.ElevatedCardButton
 import io.github.justincodinguk.core.ui.common.HeritageHubTopAppBar
-import io.github.justincodinguk.core.ui.navigation.HeritageHubBottomNavBar
 
-@OptIn(ExperimentalMaterial3Api::class)
+
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel(),
     onSignUp: () -> Unit,
-    onGoogleSignIn: () -> Unit,
     onSignIn: () -> Unit
 ) {
 
@@ -96,8 +95,7 @@ fun LoginScreen(
                     viewModel = viewModel,
                     innerPadding = innerPadding,
                     onSignIn = { errorDialogShown = false; viewModel.login() },
-                    onSignUp = onSignUp,
-                    onGoogleSignIn = onGoogleSignIn
+                    onSignUp = onSignUp
                 )
 
             }
@@ -109,7 +107,6 @@ fun LoginScreen(
                 onSignIn = {
                     errorDialogShown = false; viewModel.login()
                 },
-                onGoogleSignIn = onGoogleSignIn,
                 onSignUp = onSignUp
             )
         }
@@ -122,23 +119,19 @@ private fun AuthScreenContent(
     viewModel: AuthViewModel,
     innerPadding: PaddingValues,
     onSignIn: () -> Unit,
-    onGoogleSignIn: () -> Unit,
     onSignUp: () -> Unit,
 ) {
 
     val signInLauncher =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) {
-            Log.d("RESULT", it.resultCode.toString())
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            Log.d("Google Sign In", result.resultCode.toString())
 
-            if (it.resultCode == Activity.RESULT_OK) {
-                val signInRequest = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-                val account = signInRequest.getResult(ApiException::class.java)
-                viewModel.signInWithGoogle(account.idToken ?: "")
-                //try {
-
-                //} catch (e: ApiException) {
-                  //  e.printStackTrace()
-               // }
+            if (result.resultCode == Activity.RESULT_OK) {
+                val signInResult = Auth.GoogleSignInApi.getSignInResultFromIntent(result.data!!)!!
+                if(signInResult.isSuccess) {
+                    val account = signInResult.signInAccount
+                    viewModel.signInWithGoogle(account?.id!!)
+                }
             }
         }
 
@@ -184,14 +177,16 @@ private fun AuthScreenContent(
         )
 
         ElevatedCardButton(
-            text = "Google",
+            text = "Sign in with Google",
             icon = io.github.justincodinguk.core.ui.R.drawable.google,
             onClick = {
-                val client = GoogleSignIn.getClient(
-                    context,
-                    GoogleSignInOptions.DEFAULT_SIGN_IN
-                ).signInIntent
-                signInLauncher.launch(client)
+                val options = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                    .requestIdToken("758366006077-8np46gtpfs58kdgb2bk5lggvaa46l4oi.apps.googleusercontent.com")
+                    .requestEmail()
+                    .build()
+                val client = GoogleSignIn.getClient(context, options)
+
+
             },
             modifier = Modifier.padding(horizontal = 32.dp)
         )

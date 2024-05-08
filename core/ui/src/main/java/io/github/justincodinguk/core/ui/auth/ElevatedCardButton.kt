@@ -52,7 +52,7 @@ fun ElevatedCardButton(
             }
 
             Text(
-                text = "Sign in with $text",
+                text = text,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )

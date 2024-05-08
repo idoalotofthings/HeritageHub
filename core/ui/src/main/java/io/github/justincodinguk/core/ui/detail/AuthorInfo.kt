@@ -14,8 +14,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.size
 import coil.compose.AsyncImage
 import io.github.justincodinguk.core.model.User
+
+
 
 @Composable
 fun AuthorInfo(
@@ -37,6 +40,7 @@ fun AuthorInfo(
                 modifier = Modifier
                     .clip(CircleShape)
                     .padding(8.dp)
+                    .size(96.dp)
             )
 
             Text(

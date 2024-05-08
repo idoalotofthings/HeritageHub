@@ -1,6 +1,7 @@
 package io.github.justincodinguk.features.auth
 
 import android.net.Uri
+import android.util.Log
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -10,7 +11,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -32,6 +32,7 @@ import io.github.justincodinguk.core.ui.R
 import io.github.justincodinguk.core.ui.auth.AuthConfirmButton
 import io.github.justincodinguk.core.ui.auth.CredentialsTextField
 import io.github.justincodinguk.core.ui.auth.ElevatedCardButton
+import io.github.justincodinguk.core.ui.auth.ProfilePicturePreview
 import io.github.justincodinguk.core.ui.common.HeritageHubTopAppBar
 
 @Composable
@@ -39,6 +40,7 @@ fun RegisterScreen(
     modifier: Modifier = Modifier,
     viewModel: AuthViewModel = hiltViewModel(),
     onSignUpCompleted: () -> Unit,
+    navigateToUnverifiedUserScreen: () -> Unit,
 ) {
 
     Scaffold(
@@ -56,6 +58,7 @@ fun RegisterScreen(
             mutableStateOf(false)
         }
 
+        Log.d("AuthStatus", state.currentStatus.toString())
         when (state.currentStatus) {
             is AuthStatus.Unauthenticated -> RegisterScreenContent(
                 state = state,
@@ -78,22 +81,12 @@ fun RegisterScreen(
                 }
             }
 
-            is AuthStatus.VerificationNeeded -> {
-                if (!verificationDialogShown) {
-                    AlertDialog(
-                        onDismissRequest = { /*TODO*/ },
-                        confirmButton = { Button(onClick = { verificationDialogShown = true }) {
-                            Text(text = "Ok")
-                        } },
-                        text = { Text(text = "Check your inbox and follow the instructions in the mail. You'll be redirected to the home screen once verification completes") }
-                    )
-                }
-            }
+            is AuthStatus.VerificationNeeded -> navigateToUnverifiedUserScreen()
 
             is AuthStatus.Error -> {
                 if (!errDialogShown) {
                     AlertDialog(
-                        onDismissRequest = { /*TODO*/ },
+                        onDismissRequest = { },
                         confirmButton = {
                             TextButton(onClick = { errDialogShown = true }) {
                                 Text(text = "Ok")
@@ -187,6 +180,13 @@ private fun RegisterScreenContent(
             },
             modifier = Modifier.padding(4.dp)
         )
+
+        if(state.profilePictureUri != Uri.EMPTY) {
+            ProfilePicturePreview(
+                uri = state.profilePictureUri,
+                modifier = Modifier.padding(16.dp)
+            )
+        }
 
         AuthConfirmButton(
             text = "Sign Up", onClick = onSignUp,

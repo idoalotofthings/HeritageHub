@@ -2,6 +2,7 @@ package io.github.justincodinguk.core.ui.account
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -24,7 +25,7 @@ fun OptionsElement(
 ) {
     Card(
         elevation = CardDefaults.cardElevation(8.dp),
-        modifier = modifier.clickable { onClick() }
+        modifier = modifier.fillMaxWidth().clickable { onClick() }.padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
 
         Row(
