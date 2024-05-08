@@ -13,4 +13,6 @@ interface UserRepository {
 
     suspend fun unfollowUser(user: User)
 
+    suspend fun getUser(userId: String): User
+
 }

@@ -1,7 +1,8 @@
-package io.github.justincodinguk.core.firebase.firestore_service
+package io.github.justincodinguk.core.firebase.firestore
 
 import android.net.Uri
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestore
 import io.github.justincodinguk.core.firebase.di.UserService
@@ -44,15 +45,36 @@ internal class PostsFirestoreService @Inject constructor(
     }
 
     override suspend fun getDocumentById(id: String): Post {
-        val post = firestore.collection("/posts").document(id).get().await()
-        return post.toObject(Post::class.java)!!
+        val doc = firestore.collection("/posts").document(id).get().await()
+        val userId = doc.getDocumentReference("author")
+        val user = userFirestoreService.getDocumentById(userId!!.id)
+
+        return Post(
+            id = doc.id,
+            title = doc.getString("title") ?: "",
+            body = doc.getString("body") ?: "",
+            likeCount = doc.getLong("likeCount")?.toInt() ?: 0,
+            photoUrls = doc.get("photos") as? List<String> ?: listOf(),
+            author = user
+        )
+
+
     }
 
     override suspend fun createDocument(document: Post) : String {
-        val photos =
-            storageService.uploadImages(document.id, document.photoUrls.map { Uri.parse(it) })
         val id = firestore.collection("/posts").document().id
-        firestore.collection("/posts").document(id).set(document.copy(id = id, photoUrls = photos))
+        val photos =
+            storageService.uploadImages(id, document.photoUrls.map { Uri.parse(it) })
+
+        firestore.collection("/posts").document(id).set(
+            mapOf(
+                "title" to document.title,
+                "body" to document.body,
+                "likeCount" to document.likeCount,
+                "photos" to photos,
+                "author" to firestore.collection("/users").document(document.author.id)
+            )
+        )
             .await()
         return id
     }

@@ -18,8 +18,8 @@ interface PostsRepository {
 
     suspend fun savePost(post: Post, isFavorite: Boolean, isSelfAuthored: Boolean)
 
-    fun getSelfAuthoredPosts() : Flow<Post>
+    fun getSelfAuthoredPosts() : Flow<List<Post>>
 
-    fun getFavoritePosts() : Flow<Post>
+    fun getFavoritePosts() : Flow<List<Post>>
 
 }

@@ -2,7 +2,7 @@ package io.github.justincodinguk.core.data.paging_source
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
-import io.github.justincodinguk.core.firebase.firestore_service.FirestoreService
+import io.github.justincodinguk.core.firebase.firestore.FirestoreService
 import io.github.justincodinguk.core.model.Post
 
 class PostsPagingSource(

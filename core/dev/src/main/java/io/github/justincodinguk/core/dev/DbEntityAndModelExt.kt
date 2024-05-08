@@ -1,6 +1,7 @@
 package io.github.justincodinguk.core.dev
 
 import android.net.Uri
+import io.github.justincodinguk.core.model.Heritage
 import io.github.justincodinguk.core.database.entity.Post as PostEntity
 import io.github.justincodinguk.core.database.entity.User as UserEntity
 import io.github.justincodinguk.core.model.Post
@@ -11,9 +12,9 @@ fun PostEntity.toModelPost() : Post {
         id = id,
         title = title,
         body = body,
-        author = User(ownerId,ownerName,ownerProfile),
+        author = User(ownerId,ownerName,ownerProfile, Heritage()),
         likeCount = likeCount,
-        photoUrls = photos.map { it.toString() }
+        photoUrls = photos.split(";")
     )
 }
 
@@ -29,7 +30,7 @@ fun Post.toEntityPost(
         ownerName = author.name,
         ownerProfile = author.profileImage,
         likeCount = likeCount,
-        photos = photoUrls.map { Uri.parse(it) },
+        photos = photoUrls.joinToString(";"),
         isFavorite = isFavorite,
         isSelfCreated = isSelf
     )
@@ -39,7 +40,8 @@ fun UserEntity.toModelUser() : User {
     return User(
         id = id,
         name = name,
-        profileImage = profileImageUrl
+        profileImage = profileImageUrl,
+        Heritage()
     )
 }
 

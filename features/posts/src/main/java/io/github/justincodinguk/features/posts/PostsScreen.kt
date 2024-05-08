@@ -2,10 +2,7 @@ package io.github.justincodinguk.features.posts
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -21,6 +18,7 @@ fun PostsScreen(
     modifier: Modifier = Modifier,
     onCreatePostButtonClick: () -> Unit,
     onPostClicked: (String) -> Unit,
+    navigateToAccount: () -> Unit,
     viewModel: PostsViewModel = hiltViewModel()
 ) {
 
@@ -28,7 +26,7 @@ fun PostsScreen(
 
     Scaffold(
         topBar = { HeritageHubTopAppBar() },
-        bottomBar = { HeritageHubBottomNavBar() },
+        bottomBar = { HeritageHubBottomNavBar(selectedIndex = 0, navigateToAccountScreen = navigateToAccount) },
         floatingActionButton = {
             CreatePostFloatingActionButton(onClick = onCreatePostButtonClick)
         },
@@ -37,7 +35,9 @@ fun PostsScreen(
         Column(Modifier.padding(innerPadding)) {
             PostsList(
                 posts = posts,
-                onPostClicked = onPostClicked
+                onPostClicked = onPostClicked,
+                onPostLiked = viewModel::likePost,
+                onPostSaved = viewModel::savePost
             )
         }
     }

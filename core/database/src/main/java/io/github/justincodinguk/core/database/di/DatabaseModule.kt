@@ -14,21 +14,20 @@ import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
-internal interface DatabaseModule {
+object DatabaseModule {
 
     @Provides
     @Singleton
     fun provideHeritageHubDatabase(
         @ApplicationContext context: Context
-    ) : HeritageHubDatabase {
-        return Room.databaseBuilder(
+    ) = Room.databaseBuilder(
             context,
             HeritageHubDatabase::class.java,
             "heritage_hub.db"
         ).build()
-    }
 
     @Provides
+    @Singleton
     fun providePostsDao(
         database: HeritageHubDatabase
     ) : PostsDao {
@@ -36,6 +35,7 @@ internal interface DatabaseModule {
     }
 
     @Provides
+    @Singleton
     fun provideFollowingUsersDao(
         database: HeritageHubDatabase
     ) : FollowingUsersDao {

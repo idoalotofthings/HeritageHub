@@ -14,7 +14,7 @@ data class Post(
     val ownerId: String,
     val ownerName: String,
     val ownerProfile: String,
-    val photos: List<Uri>,
+    val photos: String,
     val isFavorite: Boolean,
     val isSelfCreated: Boolean
 )

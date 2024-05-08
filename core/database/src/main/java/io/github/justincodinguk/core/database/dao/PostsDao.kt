@@ -15,10 +15,10 @@ interface PostsDao {
     suspend fun insertPost(post: Post)
 
     @Query("SELECT * FROM posts WHERE isFavorite = 1")
-    fun getFavoritePosts(): Flow<Post>
+    fun getFavoritePosts(): Flow<List<Post>>
 
     @Query("SELECT * FROM posts WHERE isSelfCreated = 1")
-    fun getSelfPosts(): Flow<Post>
+    fun getSelfPosts(): Flow<List<Post>>
 
     @Delete
     suspend fun deletePost(post: Post)
