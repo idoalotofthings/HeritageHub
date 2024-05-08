@@ -24,10 +24,17 @@ interface FirebaseAuthService {
         accountTokenId: String
     ): Flow<AuthStatus>
 
+    fun deleteUser()
+
+    suspend fun verifyUser(name: String, profilePictureUri: Uri)
+
     fun signOut()
 
     suspend fun getCurrentUser() : User?
 
+    suspend fun isVerified() : Boolean
+
     val isSignedIn: Boolean
+
 
 }

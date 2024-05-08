@@ -6,9 +6,9 @@ import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import io.github.justincodinguk.core.firebase.auth.FirebaseAuthService
 import io.github.justincodinguk.core.firebase.auth.FirebaseAuthServiceImpl
-import io.github.justincodinguk.core.firebase.firestore_service.FirestoreService
-import io.github.justincodinguk.core.firebase.firestore_service.PostsFirestoreService
-import io.github.justincodinguk.core.firebase.firestore_service.UsersFirestoreService
+import io.github.justincodinguk.core.firebase.firestore.FirestoreService
+import io.github.justincodinguk.core.firebase.firestore.PostsFirestoreService
+import io.github.justincodinguk.core.firebase.firestore.UsersFirestoreService
 import io.github.justincodinguk.core.model.Post
 import io.github.justincodinguk.core.model.User
 

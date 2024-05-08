@@ -1,4 +1,4 @@
-package io.github.justincodinguk.core.firebase.firestore_service
+package io.github.justincodinguk.core.firebase.firestore
 
 
 interface FirestoreService<T> {

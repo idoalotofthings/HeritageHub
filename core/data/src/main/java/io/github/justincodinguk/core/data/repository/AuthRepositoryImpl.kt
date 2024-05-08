@@ -12,6 +12,14 @@ internal class AuthRepositoryImpl @Inject constructor(
     override val isSignedIn: Boolean
         get() = firebaseAuth.isSignedIn
 
+    override fun deleteUser() {
+        firebaseAuth.deleteUser()
+    }
+
+    override suspend fun verifyUser(name: String, profileImageUri: Uri) {
+        firebaseAuth.verifyUser(name, profileImageUri)
+    }
+
     override suspend fun signIn(email: String, password: String)
         = firebaseAuth.signIn(email, password)
 
@@ -32,4 +40,8 @@ internal class AuthRepositoryImpl @Inject constructor(
         name: String,
         profileImageUri: Uri
     ) = firebaseAuth.createUser(email,password,name,profileImageUri)
+
+    override suspend fun isCurrentUserVerified(): Boolean {
+        return firebaseAuth.isVerified()
+    }
 }

@@ -7,9 +7,9 @@ import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.auth
 import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.firebase.di.UserService
-import io.github.justincodinguk.core.firebase.firestore_service.FirestoreService
+import io.github.justincodinguk.core.firebase.firestore.FirestoreService
+import io.github.justincodinguk.core.model.Heritage
 import io.github.justincodinguk.core.model.User
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
@@ -21,45 +21,45 @@ internal class FirebaseAuthServiceImpl @Inject constructor(
 
     override val isSignedIn = auth.currentUser != null
 
+
+    override suspend fun isVerified(): Boolean {
+        auth.currentUser?.reload()?.await()
+        return auth.currentUser?.isEmailVerified ?: false
+    }
+
     override fun createUser(
         email: String,
         password: String,
         name: String,
         profilePictureUri: Uri
     ) = flow {
-
         emit(AuthStatus.Loading)
         try {
-
             auth.createUserWithEmailAndPassword(email, password).await()
-
             auth.currentUser?.sendEmailVerification()?.await()
             emit(AuthStatus.VerificationNeeded)
-            var count = 0
-            auth.currentUser?.isEmailVerified?.let {
-                while(!auth.currentUser?.isEmailVerified!! && count<24){
-                    count+=1
-                    kotlinx.coroutines.delay(5000L)
-                }
-
-                if(auth.currentUser?.isEmailVerified!!) {
-                    val user = User(
-                        id = email,
-                        name = name,
-                        profileImage = profilePictureUri.toString()
-                    )
-                    usersFirestoreService.createDocument(user)
-                    emit(AuthStatus.Authenticated(user))
-                } else {
-                    auth.currentUser?.delete()
-                    emit(AuthStatus.Unauthenticated)
-                }
-            }
         } catch (e: Exception) {
             e.printStackTrace()
             auth.currentUser?.delete()
             emit(AuthStatus.Error)
         }
+    }
+
+    override suspend fun verifyUser(
+        name: String,
+        profilePictureUri: Uri
+    ) {
+        val user = User(
+            id = auth.currentUser?.email ?: "",
+            name = name,
+            profileImage = profilePictureUri.toString(),
+            heritage = Heritage()
+        )
+        usersFirestoreService.createDocument(user)
+    }
+
+    override fun deleteUser() {
+        auth.currentUser?.delete()
     }
 
     override suspend fun getCurrentUser(): User? {

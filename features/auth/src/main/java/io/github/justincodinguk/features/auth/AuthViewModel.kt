@@ -23,29 +23,54 @@ class AuthViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            if (authRepository.isSignedIn) {
-                val currentUser = authRepository.getCurrentUser()!!
-                _authState.emit(
-                    AuthState(
-                        currentStatus = AuthStatus.Authenticated(currentUser),
-                        user = currentUser,
-                        currentMode = AuthMode.LOGIN,
-                        email = currentUser.id,
-                        password = "",
-                        name = currentUser.name,
-                        profilePictureUri = Uri.parse(currentUser.profileImage),
+            try {
+                if (authRepository.isSignedIn) {
+                    val currentUser = authRepository.getCurrentUser()!!
+                    if(authRepository.isCurrentUserVerified()) {
+                        _authState.emit(
+                            AuthState(
+                                currentStatus = AuthStatus.Authenticated(currentUser),
+                                user = currentUser,
+                                currentMode = AuthMode.LOGIN,
+                                email = currentUser.id,
+                                password = "",
+                                name = currentUser.name,
+                                profilePictureUri = Uri.parse(currentUser.profileImage),
+                            )
+                        )
+                    } else {
+                        _authState.emit(
+                            AuthState(
+                                currentStatus = AuthStatus.VerificationNeeded,
+                                user = currentUser,
+                                currentMode = AuthMode.LOGIN,
+                                email = currentUser.id,
+                                password = "",
+                                name = currentUser.name,
+                                profilePictureUri = Uri.parse(currentUser.profileImage),
+                            )
+                        )
+                    }
+                } else {
+                    _authState.emit(
+                        AuthState(
+                            currentStatus = AuthStatus.Unauthenticated,
+                            user = null,
+                            currentMode = AuthMode.LOGIN,
+                            email = "",
+                            password = "",
+                            name = "",
+                            profilePictureUri = Uri.EMPTY,
+                        )
                     )
-                )
-            } else {
+                }
+            } catch(e: Exception) {
+                e.printStackTrace()
                 _authState.emit(
-                    AuthState(
+                    AuthState.empty().copy(
                         currentStatus = AuthStatus.Unauthenticated,
-                        user = null,
-                        currentMode = AuthMode.LOGIN,
-                        email = "",
                         password = "",
-                        name = "",
-                        profilePictureUri = Uri.EMPTY,
+                        email = "",
                     )
                 )
             }
@@ -104,6 +129,46 @@ class AuthViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    fun checkVerificationState() {
+        Log.d("AuthVM", "Check Verification State")
+        viewModelScope.launch {
+            if(authRepository.isCurrentUserVerified()) {
+                viewModelScope.launch {
+                    authRepository.verifyUser(_authState.value.name, _authState.value.profilePictureUri)
+                    val it = authRepository.getCurrentUser()!!
+                    _authState.emit(
+                        AuthState(
+                            currentStatus = AuthStatus.Authenticated(it),
+                            user = it,
+                            currentMode = AuthMode.LOGIN,
+                            email = it.id,
+                            password = _authState.value.password,
+                            name = it.name,
+                            profilePictureUri = Uri.parse(it.profileImage),
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+    fun deleteUser() {
+        Log.d("AuthVM", "Delete User")
+
+        viewModelScope.launch {
+            authRepository.deleteUser()
+            _authState.emit(
+                AuthState.empty().copy(
+                    currentStatus = AuthStatus.Unauthenticated,
+                    user = null,
+                    currentMode = AuthMode.LOGIN,
+                    email = "",
+                    password = "",
+                )
+            )
         }
     }
 

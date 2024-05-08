@@ -17,7 +17,13 @@ interface AuthRepository {
 
     fun signOut()
 
+    suspend fun verifyUser(name: String, profileImageUri: Uri)
+
+    fun deleteUser()
+
     suspend fun getCurrentUser(): User?
+
+    suspend fun isCurrentUserVerified() : Boolean
 
     fun createUser(
         email: String,
