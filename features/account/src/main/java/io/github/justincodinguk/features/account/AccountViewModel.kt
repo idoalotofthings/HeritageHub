@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.justincodinguk.core.data.repository.AuthRepository
 import io.github.justincodinguk.core.data.repository.UserRepository
+import io.github.justincodinguk.core.model.Heritage
 import io.github.justincodinguk.core.model.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -33,7 +34,8 @@ class AccountViewModel @Inject constructor(
                 User(
                     _user.value.id,
                     name,
-                    profile
+                    profile,
+                    Heritage()
                 )
             )
             val currentUser = authRepository.getCurrentUser()!!

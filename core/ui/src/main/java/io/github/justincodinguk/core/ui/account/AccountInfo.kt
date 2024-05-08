@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import io.github.justincodinguk.core.model.User
@@ -37,13 +37,16 @@ fun AccountInfo(
             contentDescription = "Profile Picture",
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .clip(CircleShape)
+                .padding(8.dp)
                 .border(
                     color = LocalContentColor.current,
                     width = 2.dp,
                     shape = CircleShape
                 )
-                .padding(16.dp)
+                .clip(CircleShape)
+
+
+                .size(96.dp)
         )
 
         Text(

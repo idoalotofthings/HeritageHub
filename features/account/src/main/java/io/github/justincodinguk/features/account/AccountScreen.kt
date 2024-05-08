@@ -30,7 +30,8 @@ fun AccountScreen(
     navigateToMyPostsScreen: () -> Unit,
     navigateToMyHeritageScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit,
-    navigateToLoginScreen: () -> Unit
+    navigateToLoginScreen: () -> Unit,
+    navigateToHome: () -> Unit
 ) {
 
     val user by viewModel.user.collectAsState()
@@ -38,7 +39,7 @@ fun AccountScreen(
     Scaffold(
         modifier = modifier,
         topBar = { HeritageHubTopAppBar() },
-        bottomBar = { HeritageHubBottomNavBar() }
+        bottomBar = { HeritageHubBottomNavBar(selectedIndex = 1, navigateToHome = navigateToHome) }
     ) { innerPadding ->
 
         var logoutConfirmationVisible by remember {
@@ -55,7 +56,7 @@ fun AccountScreen(
                 icon = Icons.Default.Edit,
                 onIconClick = {
                     // TODO: Open dialog to edit user info
-                }
+                },
             )
 
             OptionsMenu(
@@ -72,8 +73,9 @@ fun AccountScreen(
                     confirmButton = {
                         TextButton(
                             onClick = {
-                                navigateToLoginScreen()
                                 viewModel.signOut()
+                                navigateToLoginScreen()
+
                             }
                         ) {
                             Text(text = "Yes")
