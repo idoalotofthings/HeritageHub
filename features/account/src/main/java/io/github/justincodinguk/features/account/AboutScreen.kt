@@ -40,7 +40,7 @@ fun AboutScreen(modifier: Modifier = Modifier) {
             )
 
             Text(
-                text = "BODY", // TODO: Add body
+                text = "Heritage Hub is an app specifically designed to connect the generation back to their routes. With use of technology and social engineering, the users are encouraged to learn more about their heritage, and spread the word to the entire world.", // TODO: Add body
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )

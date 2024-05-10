@@ -21,10 +21,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -41,10 +47,22 @@ import io.github.justincodinguk.core.ui.theme.HeritageHubTheme
 fun PostCard(
     post: Post,
     modifier: Modifier = Modifier,
+    isSaved: Boolean = false,
     onClick: () -> Unit,
     onSave: () -> Unit,
     onLike: () -> Unit
 ) {
+
+    var likeCount by remember {
+        mutableIntStateOf(post.likeCount)
+    }
+    var isLiked by remember {
+        mutableStateOf(false)
+    }
+    var isFav by remember {
+        mutableStateOf(false)
+    }
+
     Card(
         elevation = CardDefaults.elevatedCardElevation(16.dp),
         modifier = modifier
@@ -66,7 +84,7 @@ fun PostCard(
                 model = post.author.profileImage,
                 contentDescription = "Owner profile",
                 contentScale = ContentScale.Crop,
-                placeholder = debugPlaceholder(id = R.drawable.pfp),
+                placeholder = painterResource(id = R.drawable.logo),
                 modifier = Modifier
                     .offset(y = 32.dp)
                     .size(96.dp)
@@ -74,7 +92,6 @@ fun PostCard(
                     .padding(8.dp)
                     .border(4.dp, MaterialTheme.colorScheme.surfaceVariant, shape = CircleShape)
                     .clip(CircleShape)
-
 
             )
         }
@@ -84,7 +101,11 @@ fun PostCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Column(Modifier.padding(8.dp).weight(5f)) {
+            Column(
+                Modifier
+                    .padding(8.dp)
+                    .weight(5f)
+            ) {
                 Text(
                     text = post.title,
                     style = MaterialTheme.typography.titleLarge,
@@ -100,7 +121,9 @@ fun PostCard(
 
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(8.dp).weight(4f)
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(4f)
             ) {
                 Surface(
                     modifier = Modifier.padding(2.dp),
@@ -113,12 +136,21 @@ fun PostCard(
                 Spacer(Modifier.height(8.dp))
 
                 ReactionChip(
-                    likeCount = 54,
-                    isSaved = true,
-                    isLiked = false,
+                    likeCount = likeCount,
+                    isSaved = isFav,
+                    isLiked = isLiked,
                     modifier = Modifier.padding(2.dp),
-                    onSave = onSave,
-                    onLike = onLike
+                    onSave = {
+                        if(isFav) {
+                            onSave()
+                        }
+                        isFav!=isFav
+                    },
+                    onLike = {
+                        onLike();
+                        if (isLiked) likeCount-- else likeCount++
+                        isLiked = !isLiked
+                    }
                 )
             }
         }
@@ -144,7 +176,8 @@ private fun PostCardPreview() {
                 body = "",
                 likeCount = 12,
 
-            ),Modifier,{}, {}
+                ),
+            Modifier, isSaved = false, onClick = {}, onSave = {},
         ) {}
     }
 }

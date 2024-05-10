@@ -54,7 +54,7 @@ fun ReactionChip(
                 clickable = true,
                 onClick = onLike
             )
-
+/*
             VerticalDivider(
                 Modifier.height(32.dp).padding(horizontal=4.dp),
                 color = LocalContentColor.current
@@ -76,6 +76,8 @@ fun ReactionChip(
                     modifier = Modifier.padding(horizontal = 4.dp)
                 )
             }
+            */
+
         }
     }
 }

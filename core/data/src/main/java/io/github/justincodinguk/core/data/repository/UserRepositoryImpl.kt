@@ -32,13 +32,24 @@ internal class UserRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun unfollowUser(user: User) {
+    override suspend fun unfollowUser(currentId: String, user: User) {
         usersDao.deleteUser(user.toEntityUser())
-        // TODO: Update on firebase as well
+        userFirestoreService.updateDocument(user.copy(followersId = user.followersId.filter { it != currentId }))
     }
 
     override suspend fun getUser(userId: String): User {
         return userFirestoreService.getDocumentById(userId)
+    }
+
+    override suspend fun followUser(currentId: String, user: User) {
+        usersDao.insertUser(user.toEntityUser())
+        userFirestoreService.updateDocument(
+            user.copy(
+                followersId = user.followersId + listOf(
+                    currentId
+                )
+            )
+        )
     }
 
 }

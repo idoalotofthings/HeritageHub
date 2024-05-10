@@ -1,8 +1,24 @@
 package io.github.justincodinguk.heritagehub.navigation
 
 import android.util.Log
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandHorizontally
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkHorizontally
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -32,9 +48,9 @@ fun HeritageHubNavigator(
     navController: NavHostController = rememberNavController(),
 ) {
 
-    val authViewModel : AuthViewModel = hiltViewModel()
-    val heritageViewModel : HeritageViewModel = hiltViewModel()
-    val postsViewModel : PostsViewModel = hiltViewModel()
+    val authViewModel: AuthViewModel = hiltViewModel()
+    val heritageViewModel: HeritageViewModel = hiltViewModel()
+    val postsViewModel: PostsViewModel = hiltViewModel()
 
     NavHost(navController = navController, Routes.SPLASH.name) {
         composable(Routes.SIGN_IN.name) {
@@ -45,7 +61,11 @@ fun HeritageHubNavigator(
             )
         }
 
-        composable(Routes.SIGN_UP.name) {
+        composable(
+            Routes.SIGN_UP.name,
+            enterTransition = { slideInHorizontally() },
+            exitTransition = { slideOutHorizontally() }
+        ) {
             RegisterScreen(
                 onSignUpCompleted = { navController.navigate(Routes.HOME.name) },
                 navigateToUnverifiedUserScreen = {
@@ -56,7 +76,11 @@ fun HeritageHubNavigator(
             )
         }
 
-        composable(Routes.HOME.name) {
+        composable(
+            Routes.HOME.name,
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
+        ) {
             PostsScreen(
                 onCreatePostButtonClick = {
                     navController.navigate(Routes.CREATE_POST.name)
@@ -69,12 +93,24 @@ fun HeritageHubNavigator(
             )
         }
 
-        composable("${Routes.DETAILS.name}/{postId}") {
+        composable(
+            "${Routes.DETAILS.name}/{postId}",
+            enterTransition = {
+                expandVertically() + expandHorizontally()
+            },
+            exitTransition = {
+                shrinkVertically() + shrinkHorizontally()
+            }
+        ) {
             val postId = it.arguments?.getString("postId") ?: ""
             DetailsScreen(postId)
         }
 
-        composable(Routes.CREATE_POST.name) {
+        composable(
+            Routes.CREATE_POST.name,
+            enterTransition = { slideInHorizontally() + slideInVertically() },
+            exitTransition = { slideOutHorizontally() + slideOutVertically() }
+        ) {
             NewPostScreen(
                 navigateBackToHomeScreen = {
                     navController.navigate(Routes.HOME.name)
@@ -83,22 +119,41 @@ fun HeritageHubNavigator(
             )
         }
 
-        composable(Routes.ACCOUNT.name) {
+        composable(
+            Routes.ACCOUNT.name,
+            enterTransition = { fadeIn() },
+            exitTransition = { fadeOut() }
+        ) {
             AccountScreen(
                 navigateToFollowersScreen = { navController.navigate(Routes.FOLLOWING.name) },
                 navigateToMyPostsScreen = { navController.navigate(Routes.MY_POSTS.name) },
                 navigateToMyHeritageScreen = { navController.navigate("${Routes.MY_HERITAGE.name}/${authViewModel.authState.value.user?.id}") },
                 navigateToAboutScreen = { navController.navigate(Routes.ABOUT.name) },
-                navigateToLoginScreen = { navController.navigate(Routes.SIGN_IN.name) },
-                navigateToHome = { navController.navigate(Routes.HOME.name)}
+                navigateToLoginScreen = {
+                    authViewModel.clearState()
+                    navController.navigate(Routes.SIGN_IN.name)
+                },
+                navigateToHome = { navController.navigate(Routes.HOME.name) }
             )
         }
 
-        composable(Routes.FOLLOWING.name) {
-            FollowingUsersScreen()
+        composable(
+            Routes.FOLLOWING.name,
+            enterTransition = { expandIn() },
+            exitTransition = { shrinkOut() }
+        ) {
+            FollowingUsersScreen(
+                navigateToHeritageScreen = {
+                    navController.navigate("${Routes.MY_HERITAGE.name}/${it}")
+                }
+            )
         }
 
-        composable(Routes.MY_POSTS.name) {
+        composable(
+            Routes.MY_POSTS.name,
+            enterTransition = { expandIn() },
+            exitTransition = { shrinkOut() }
+        ) {
             MyPostsScreen(
                 navigateToDetailsScreen = {
                     navController.navigate("${Routes.DETAILS.name}/${it}")
@@ -108,17 +163,31 @@ fun HeritageHubNavigator(
 
         }
 
-        composable(Routes.ABOUT.name) {
+        composable(
+            Routes.ABOUT.name,
+            enterTransition = { expandIn() },
+            exitTransition = { shrinkOut() }
+        ) {
             AboutScreen()
         }
 
-        composable(Routes.CREATE_HERITAGE.name) {
-            CreateHeritageScreen()
+        composable(
+            Routes.CREATE_HERITAGE.name,
+            enterTransition = { slideInHorizontally() + slideInVertically() },
+            exitTransition = { slideOutHorizontally() + slideOutVertically() }
+        ) {
+            CreateHeritageScreen(viewModel = heritageViewModel) {
+                navController.navigate("${Routes.MY_HERITAGE.name}/${authViewModel.authState.value.user?.id}")
+            }
         }
 
-        composable("${Routes.MY_HERITAGE.name}/{id}") {
+        composable(
+            "${Routes.MY_HERITAGE.name}/{id}",
+            enterTransition = { expandIn() },
+            exitTransition = { shrinkOut() }
+        ) {
             val id = it.arguments?.getString("id") ?: ""
-            MyHeritageScreen(userId = id) {
+            MyHeritageScreen(userId = id, viewModel = heritageViewModel) {
                 navController.navigate(Routes.CREATE_HERITAGE.name)
             }
         }
@@ -130,7 +199,11 @@ fun HeritageHubNavigator(
             )
         }
 
-        composable(Routes.UNVERIFIED_USER.name) {
+        composable(
+            Routes.UNVERIFIED_USER.name,
+            enterTransition = { slideInVertically() },
+            exitTransition = { slideOutVertically() }
+        ) {
             UnverifiedUserScreen(
                 navigateToHome = { navController.navigate(Routes.HOME.name) },
                 navigateToLogin = { navController.navigate(Routes.SIGN_IN.name) },

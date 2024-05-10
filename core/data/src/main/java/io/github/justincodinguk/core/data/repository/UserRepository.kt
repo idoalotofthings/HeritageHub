@@ -11,8 +11,10 @@ interface UserRepository {
 
     fun getFollowedUsers(): Flow<List<User>>
 
-    suspend fun unfollowUser(user: User)
+    suspend fun unfollowUser(currentId: String, user: User)
 
     suspend fun getUser(userId: String): User
+
+    suspend fun followUser(currentId: String, user: User)
 
 }

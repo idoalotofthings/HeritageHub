@@ -132,6 +132,22 @@ class AuthViewModel @Inject constructor(
         }
     }
 
+    fun clearState() {
+        viewModelScope.launch {
+            _authState.emit(
+                AuthState(
+                    currentStatus = AuthStatus.Unauthenticated,
+                    user = null,
+                    currentMode = AuthMode.LOGIN,
+                    email = "",
+                    password = "",
+                    name = "",
+                    profilePictureUri = Uri.EMPTY,
+                )
+            )
+        }
+    }
+
     fun checkVerificationState() {
         Log.d("AuthVM", "Check Verification State")
         viewModelScope.launch {
@@ -215,9 +231,19 @@ class AuthViewModel @Inject constructor(
         }
     }
 
-    fun signInWithGoogle(accountId: String) {
+    fun signInWithGoogle(
+        accountId: String,
+        mail: String,
+        name: String,
+        profilePictureUri: Uri
+    ) {
         viewModelScope.launch {
-            authRepository.googleSignIn(accountId).collect {
+            authRepository.googleSignIn(
+                accountTokenId = accountId,
+                name = name,
+                mail = mail,
+                profileImageUri = profilePictureUri
+            ).collect {
                 if (it is AuthStatus.Authenticated) {
                     _authState.emit(
                         _authState.value.copy(

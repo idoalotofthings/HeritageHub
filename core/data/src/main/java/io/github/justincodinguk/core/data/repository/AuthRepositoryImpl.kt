@@ -1,8 +1,10 @@
 package io.github.justincodinguk.core.data.repository
 
 import android.net.Uri
+import io.github.justincodinguk.core.dev.AuthStatus
 import io.github.justincodinguk.core.firebase.auth.FirebaseAuthService
 import io.github.justincodinguk.core.model.User
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 internal class AuthRepositoryImpl @Inject constructor(
@@ -20,11 +22,21 @@ internal class AuthRepositoryImpl @Inject constructor(
         firebaseAuth.verifyUser(name, profileImageUri)
     }
 
-    override suspend fun signIn(email: String, password: String)
-        = firebaseAuth.signIn(email, password)
+    override suspend fun signIn(email: String, password: String) =
+        firebaseAuth.signIn(email, password)
 
-    override suspend fun googleSignIn(accountTokenId: String)
-        = firebaseAuth.googleSignIn(accountTokenId)
+    override suspend fun googleSignIn(
+        accountTokenId: String,
+        mail: String,
+        name: String,
+        profileImageUri: Uri
+    ): Flow<AuthStatus> = firebaseAuth.googleSignIn(
+        profilePictureUri = profileImageUri,
+        accountTokenId = accountTokenId,
+        name = name,
+        mail = mail
+    )
+
 
     override fun signOut() {
         firebaseAuth.signOut()
@@ -39,7 +51,7 @@ internal class AuthRepositoryImpl @Inject constructor(
         password: String,
         name: String,
         profileImageUri: Uri
-    ) = firebaseAuth.createUser(email,password,name,profileImageUri)
+    ) = firebaseAuth.createUser(email, password, name, profileImageUri)
 
     override suspend fun isCurrentUserVerified(): Boolean {
         return firebaseAuth.isVerified()

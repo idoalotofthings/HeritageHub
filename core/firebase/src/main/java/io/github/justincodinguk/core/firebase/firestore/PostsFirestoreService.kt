@@ -2,7 +2,6 @@ package io.github.justincodinguk.core.firebase.firestore
 
 import android.net.Uri
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.firestore
 import io.github.justincodinguk.core.firebase.di.UserService
@@ -36,7 +35,7 @@ internal class PostsFirestoreService @Inject constructor(
                     title = doc.getString("title") ?: "",
                     body = "",
                     likeCount = doc.getLong("likeCount")?.toInt() ?: 0,
-                    photoUrls = listOf((doc.get("photos") as? List<String>)?.get(0) ?: ""),
+                    photoUrls = doc.get("photos") as? List<String> ?: listOf(),
                     author = user
                 )
             )
@@ -84,7 +83,15 @@ internal class PostsFirestoreService @Inject constructor(
     }
 
     override suspend fun updateDocument(document: Post) {
-        firestore.collection("/posts").document(document.id).set(document).await()
+        val docRef = firestore.collection("/posts").document(document.id)
+        docRef.set(
+            mapOf(
+                "title" to document.title,
+                "body" to document.body,
+                "likeCount" to document.likeCount,
+                "photos" to document.photoUrls,
+                "author" to firestore.collection("/users").document(document.author.id),
+            )
+        )
     }
-
 }

@@ -1,5 +1,7 @@
 package io.github.justincodinguk.core.ui.following
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -25,8 +27,9 @@ fun FollowUserInfo(
     modifier: Modifier = Modifier,
     user: User,
     onUnfollow: () -> Unit,
+    onClick: (String) -> Unit
 ) {
-    Card(modifier = modifier) {
+    Card(modifier = modifier.clickable { onClick(user.id) }) {
         Row {
             AsyncImage(
                 model = user.profileImage,
@@ -38,23 +41,19 @@ fun FollowUserInfo(
                     .size(48.dp)
             )
 
-            Column {
+            Column(Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.Center) {
                 Text(
                     text = user.name,
                     modifier = Modifier.padding(bottom = 4.dp),
                     style = MaterialTheme.typography.labelMedium,
                     fontWeight = FontWeight.Bold
                 )
-                Text(
-                    text = "Followers: ",// TODO: Implement followers on firebase
-                    style = MaterialTheme.typography.labelMedium
-                )
-            }
+                Spacer(modifier = Modifier.fillMaxWidth())
 
-            Spacer(modifier = Modifier.fillMaxWidth())
-
-            Button(onClick = onUnfollow) {
-                Text(text = "Unfollow")
+                Button(onClick = onUnfollow) {
+                    Text(text = "Unfollow")
+                }
             }
         }
     }

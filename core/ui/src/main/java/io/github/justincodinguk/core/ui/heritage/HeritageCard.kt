@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import io.github.justincodinguk.core.model.HeritageElement
 import io.github.justincodinguk.core.ui.R
 import androidx.compose.foundation.layout.size
+import androidx.compose.ui.Alignment
 
 @Composable
 fun HeritageCard(
@@ -26,27 +27,35 @@ fun HeritageCard(
     heritageElement: HeritageElement,
     showArrow: Boolean = true
 ) {
-    Column(modifier = modifier) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         Card(
             shape = RoundedCornerShape(32.dp)
         ) {
-            Text(
-                text = heritageElement.title,
-                style = MaterialTheme.typography.titleMedium,
-                fontWeight = FontWeight.Bold,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
-            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = heritageElement.title,
+                    style = MaterialTheme.typography.titleMedium,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
+                )
 
-            HorizontalDivider(
-                Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp))
+                HorizontalDivider(
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp))
 
-            Text(
-                text = heritageElement.generation,
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
-            )
+                Text(
+                    text = heritageElement.generation,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(horizontal = 32.dp, vertical = 8.dp)
+                )
+            }
         }
         if(showArrow) {
             Row(horizontalArrangement = Arrangement.SpaceAround, modifier = Modifier.fillMaxWidth()) {
@@ -54,7 +63,9 @@ fun HeritageCard(
                     Image(
                         painter = painterResource(id = R.drawable.vine_connector),
                         contentDescription = "",
-                        modifier = Modifier.padding(horizontal = 32.dp).size(64.dp),
+                        modifier = Modifier
+                            .padding(horizontal = 32.dp)
+                            .size(64.dp),
                         colorFilter = androidx.compose.ui.graphics.ColorFilter.tint(MaterialTheme.colorScheme.primary)
                     )
                 }

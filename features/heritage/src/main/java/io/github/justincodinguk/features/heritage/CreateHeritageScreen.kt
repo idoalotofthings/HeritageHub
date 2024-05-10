@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ElevatedButton
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -26,7 +27,8 @@ import io.github.justincodinguk.core.ui.heritage.HeritageTree
 @Composable
 fun CreateHeritageScreen(
     modifier: Modifier = Modifier,
-    viewModel: HeritageViewModel = hiltViewModel()
+    viewModel: HeritageViewModel = hiltViewModel(),
+    navigateToMyHeritage: () -> Unit
 ) {
 
     val state by viewModel.heritageCreationState.collectAsState()
@@ -38,11 +40,22 @@ fun CreateHeritageScreen(
         modifier = modifier,
         topBar = { HeritageHubTopAppBar() },
         floatingActionButton = {
-            CreatePostFloatingActionButton(
-                onClick = {
-                    dialogVisible = true
+            Column {
+                CreatePostFloatingActionButton(
+                    onClick = {
+                        dialogVisible = true
+                    }
+                )
+                FloatingActionButton(
+                    onClick = {
+                        viewModel.saveHeritage()
+                        navigateToMyHeritage()
+                    },
+                    modifier = Modifier.padding(vertical = 16.dp)
+                ) {
+                    Text(text = "Save")
                 }
-            )
+            }
         }
     ) { innerPadding ->
 

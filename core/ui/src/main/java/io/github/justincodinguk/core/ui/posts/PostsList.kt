@@ -5,6 +5,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.LazyPagingItems
@@ -16,6 +20,7 @@ fun PostsList(
     posts: LazyPagingItems<Post>,
     modifier: Modifier = Modifier,
     onPostClicked: (String) -> Unit,
+    favPosts: List<String> = emptyList(),
     onPostLiked: (String) -> Unit,
     onPostSaved: (String) -> Unit,
 ) {
@@ -27,6 +32,7 @@ fun PostsList(
                 onClick = {
                     onPostClicked(posts[it]!!.id)
                 },
+                isSaved = posts[it]!!.id in favPosts,
                 onSave = { onPostSaved(posts[it]!!.id) },
                 onLike = { onPostLiked(posts[it]!!.id) }
             )
@@ -47,7 +53,9 @@ fun PostsList(
                 modifier = Modifier.padding(4.dp),
                 onClick = {
                     onPostClicked(it.id)
-                },{},{}
+                },
+                onLike = {},
+                onSave = {}
             )
         }
     }

@@ -2,6 +2,8 @@ package io.github.justincodinguk.features.account
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.AlertDialog
@@ -30,7 +32,7 @@ fun AccountScreen(
     navigateToMyPostsScreen: () -> Unit,
     navigateToMyHeritageScreen: () -> Unit,
     navigateToAboutScreen: () -> Unit,
-    navigateToLoginScreen: () -> Unit,
+    navigateToLoginScreen: (Boolean) -> Unit,
     navigateToHome: () -> Unit
 ) {
 
@@ -45,9 +47,9 @@ fun AccountScreen(
         var logoutConfirmationVisible by remember {
             mutableStateOf(false)
         }
-
+        val scrollState = rememberScrollState()
         Column(
-            modifier = Modifier.padding(innerPadding),
+            modifier = Modifier.padding(innerPadding).verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
@@ -74,8 +76,7 @@ fun AccountScreen(
                         TextButton(
                             onClick = {
                                 viewModel.signOut()
-                                navigateToLoginScreen()
-
+                                navigateToLoginScreen(false)
                             }
                         ) {
                             Text(text = "Yes")

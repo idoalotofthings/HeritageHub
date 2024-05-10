@@ -20,6 +20,7 @@ interface PostsRepository {
 
     fun getSelfAuthoredPosts() : Flow<List<Post>>
 
-    fun getFavoritePosts() : Flow<List<Post>>
+    fun getFavoritePostIds() : Flow<List<String>>
+    fun getFavoritePosts() : Flow<PagingData<Post>>
 
 }

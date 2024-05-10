@@ -21,7 +21,10 @@ interface FirebaseAuthService {
     ): Flow<AuthStatus>
 
     suspend fun googleSignIn(
-        accountTokenId: String
+        accountTokenId: String,
+        mail:String,
+        name: String,
+        profilePictureUri: Uri,
     ): Flow<AuthStatus>
 
     fun deleteUser()

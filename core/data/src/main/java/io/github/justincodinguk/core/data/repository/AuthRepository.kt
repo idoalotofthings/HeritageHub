@@ -12,7 +12,10 @@ interface AuthRepository {
     suspend fun signIn(email: String, password: String) : Flow<AuthStatus>
 
     suspend fun googleSignIn(
-        accountTokenId: String
+        accountTokenId: String,
+        mail: String,
+        name: String,
+        profileImageUri: Uri
     ) : Flow<AuthStatus>
 
     fun signOut()

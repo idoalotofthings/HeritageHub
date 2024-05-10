@@ -16,7 +16,8 @@ import io.github.justincodinguk.core.ui.following.FollowUserInfo
 @Composable
 fun FollowingUsersScreen(
     modifier: Modifier = Modifier,
-    viewModel: FollowingUsersViewModel = hiltViewModel()
+    viewModel: FollowingUsersViewModel = hiltViewModel(),
+    navigateToHeritageScreen: (String) -> Unit,
 ) {
 
     val users by viewModel.users.collectAsState()
@@ -32,7 +33,8 @@ fun FollowingUsersScreen(
                     onUnfollow = {
                         viewModel.unfollowUser(it)
                     },
-                    modifier = Modifier.padding(8.dp)
+                    modifier = Modifier.padding(8.dp),
+                    onClick = navigateToHeritageScreen
                 )
             }
         }

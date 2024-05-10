@@ -84,19 +84,32 @@ internal class FirebaseAuthServiceImpl @Inject constructor(
     }
 
     override suspend fun googleSignIn(
-        accountTokenId: String
+        accountTokenId: String,
+        mail: String,
+        name: String,
+        profilePictureUri: Uri
     ) = flow {
         Log.d("AuthServiceImpl", "googleSignIn Loads")
         emit(AuthStatus.Loading)
         val credential = GoogleAuthProvider.getCredential(accountTokenId, null)
         try {
             val result = auth.signInWithCredential(credential).await()
-            val user = usersFirestoreService.getDocumentById(result.user?.email!!)
+            val user = try {
+                usersFirestoreService.getDocumentById(result.user?.email!!)
+            } catch (e: Exception) {
+                val user = User(
+                    id = result.user?.email!!,
+                    name = name,
+                    profileImage = profilePictureUri.toString(),
+                    heritage = Heritage()
+                )
+                usersFirestoreService.createDocument(user)
+                user
+            }
             Log.d("AuthServiceImpl", "googleSignIn Success")
             emit(AuthStatus.Authenticated(user))
         } catch (e: Exception) {
             e.printStackTrace()
-            Log.d("AuthServiceImpl", "googleSignIn Error")
             emit(AuthStatus.Error)
         }
     }

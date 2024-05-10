@@ -15,15 +15,22 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 import io.github.justincodinguk.core.model.User
-
+import io.github.justincodinguk.core.ui.R
 
 
 @Composable
 fun AuthorInfo(
     user: User,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isFollowed: Boolean = false,
+    onFollow: () -> Unit = {}
 ) {
     Card(
         elevation = CardDefaults.cardElevation(8.dp),
@@ -48,6 +55,16 @@ fun AuthorInfo(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
+
+            IconButton(
+                onClick = onFollow,
+                modifier = Modifier.padding(8.dp)
+            ) {
+                Icon(
+                    painter = if(isFollowed) painterResource(id = R.drawable.ic_notif_active) else painterResource(id = R.drawable.ic_notif),
+                    contentDescription = ""
+                )
+            }
         }
     }
 }

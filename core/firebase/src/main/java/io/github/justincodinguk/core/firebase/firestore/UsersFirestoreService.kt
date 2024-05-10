@@ -30,13 +30,30 @@ internal class UsersFirestoreService @Inject constructor(
     override suspend fun getDocumentById(id: String): User {
         val user = firestore.collection("/users").document(id).get().await()
 
+        val heritage = try {
+            val elements = (user.get("heritage") as Map<String, List<Map<String, String>>>)["heritageElements"]?.map {
+                HeritageElement(
+                    title = it["title"] ?: "",
+                    generation = it["generation"] ?: ""
+                )
+            }
+            Heritage(elements ?:     emptyList())
+        } catch (e: Exception) {
+            Heritage()
+        }
+
+        val followers = try {
+            user.get("followers") as List<String>
+        } catch (e: Exception) {
+            emptyList()
+        }
+
         return User(
             id = id,
             name = user.getString("name") ?: "",
             profileImage = user.getString("profileImage") ?: "",
-            heritage = Heritage()/*Heritage((user.get("heritage") as List<List<String>>).map {
-                HeritageElement(it[0], it[1])
-            })*/
+            heritage = heritage,
+            followersId = followers
         )
     }
 
@@ -45,7 +62,7 @@ internal class UsersFirestoreService @Inject constructor(
     }
 
     override suspend fun updateDocument(document: User) {
-        firestore.collection("/users").document(document.id).set(document).await()
+        firestore.collection("/users").document(document.id).set(document)
     }
 
     override suspend fun createDocument(document: User): String {

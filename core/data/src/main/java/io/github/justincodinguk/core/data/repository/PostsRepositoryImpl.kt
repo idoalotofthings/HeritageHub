@@ -2,6 +2,7 @@ package io.github.justincodinguk.core.data.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
+import androidx.paging.PagingData
 import io.github.justincodinguk.core.data.paging_source.PostsPagingSource
 import io.github.justincodinguk.core.database.dao.PostsDao
 import io.github.justincodinguk.core.dev.toEntityPost
@@ -22,7 +23,7 @@ internal class PostsRepositoryImpl @Inject constructor(
 
     override fun getPagedPosts() = Pager(
         config = PagingConfig(pageSize = 20),
-    ) { PostsPagingSource(firestoreService) }.flow
+    ) { PostsPagingSource(firestoreService,postsDao,false) }.flow
 
     override suspend fun createPost(post: Post) = firestoreService.createDocument(post)
 
@@ -40,19 +41,19 @@ internal class PostsRepositoryImpl @Inject constructor(
         postsDao.insertPost(post.toEntityPost(isFavorite, isSelfAuthored))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
-    override fun getFavoritePosts(): Flow<List<Post>> {
-        return postsDao.getFavoritePosts().mapLatest {
-            it.map { e -> e.toModelPost()
-            }
-        }
-    }
+    override fun getFavoritePosts() = Pager(
+        config = PagingConfig(pageSize = 20),
+        ) { PostsPagingSource(firestoreService,postsDao, true) }.flow
 
     @OptIn(ExperimentalCoroutinesApi::class)
     override fun getSelfAuthoredPosts(): Flow<List<Post>> {
         return postsDao.getSelfPosts().mapLatest {
             it.map { e -> e.toModelPost() }
         }
+    }
+
+    override fun getFavoritePostIds(): Flow<List<String>> {
+        return postsDao.getFavoritePostIds()
     }
 
 }

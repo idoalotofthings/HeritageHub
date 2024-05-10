@@ -72,7 +72,7 @@ fun IconText(
         }
         Text(
             text = text,
-            modifier = Modifier.padding(2.dp)
+            modifier = Modifier.padding(8.dp)
         )
     }
 }

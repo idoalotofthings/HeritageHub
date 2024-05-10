@@ -3,13 +3,16 @@ package io.github.justincodinguk.features.posts
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.ElevatedButton
@@ -48,6 +51,8 @@ fun NewPostScreen(
         viewModel.updatePostCreationState(photos = it.map { e -> e.toString() })
     }
 
+    val scrollState = rememberScrollState()
+
     Scaffold(
         modifier = modifier,
         topBar = { TopAppBar(title = { Text(text = "New Post") }) }
@@ -56,7 +61,8 @@ fun NewPostScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .fillMaxSize(),
+                .fillMaxSize()
+                .verticalScroll(scrollState),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
